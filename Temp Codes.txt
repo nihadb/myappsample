@@ -1,0 +1,105 @@
+ssh -i C:\Users\nihad\Downloads\KeyPair_XLR8_DB.pem openvpnas@44.235.247.95
+
+sudo su -
+passwd openvpn
+
+Admin  UI: https://44.235.247.95:943/admin
+Client UI: https://44.235.247.95:943/
+
+
+sudo apt update
+apt install dnf
+
+
+
+https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_GettingStarted.CreatingConnecting.Oracle.html#CHAP_GettingStarted.Creating.Oracle
+
+
+
+-- downloading from S3 on EC2
+sudo yum install aws-cli    # For CentOS/RHEL
+
+
+aws s3 cp s3://your-bucket-name/path/to/file /path/on/ec2
+
+
+
+
+-- load data pump AWS:  https://www.youtube.com/watch?v=qjE5p_eEft8
+----------------------
+select * from dba_procedures
+where object_name like '%RDSADMIN%S3%';
+
+select RDSADMIN.RDSADMIN_S3_TASKS.DOWNLOAD_FROM_S3
+    (p_bucket_name => 'stockitdata',
+    p_s3_prefix => 'EXPDAT01-11_15_26.DMP',
+    p_directory_name => 'DATA_PUMP_DIR') as task_id
+from dual;
+
+select text from table(RDSADMIN.rds_file_util.read_text_file('BDUMP', 'dbtask-1721932381282-59.log'));
+
+select * from dba_directories;
+
+select * from table(RDSADMIN.rds_file_util.listdir('DATA_PUMP_DIR')) order by mtime;
+
+BEGIN
+   UTL_FILE.FREMOVE(location => 'DATA_PUMP_DIR', filename => 'old_data.dmp');
+   commit;
+end;
+/
+
+
+
+
+ssh -i C:\Users\nihad\Downloads\KeyPair_XLR8_DB.pem ec2-user@ec2-54-188-45-180.us-west-2.compute.amazonaws.com
+yum install sudo
+
+
+
+--- For Github set up:
+sudo yum install git -y
+ssh-keygen -t rsa -b 4096 -C "nihad.barghouti@gmail.com"
+cat ~/.ssh/id_rsa.pub
+
+Go to GitHub and log in.
+Navigate to Settings > SSH and GPG keys > New SSH key.
+Paste the key and save it.
+
+chmod 600 ~/.ssh/id_rsa
+chmod 644 ~/.ssh/id_rsa.pub
+
+ssh -T git@github.com
+sudo git clone git@github.com:nihadb/xlr8.git
+
+git pull origin
+
+
+--- To install pip
+curl -O https://bootstrap.pypa.io/get-pip.py
+python3 get-pip.py --user
+
+
+-- to install cx_Oracle
+https://github.com/wajuqi/cx_Oracle-Lambda-layer?tab=readme-ov-file
+
+
+
+-- anaconda & talib
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+bash Miniconda3-latest-Linux-x86_64.sh
+source ~/.bashrc
+conda --version
+conda create -n myenv python=3.8
+conda activate myenv
+conda install -c conda-forge ta-lib
+
+-- install Polygon
+pip install polygon-api-client
+
+
+-- install scikit 
+pip install -U scikit-learn
+
+
+-- install pandas_market_calendars
+conda install pandas_market_calendars
