@@ -103,3 +103,14 @@ pip install -U scikit-learn
 
 -- install pandas_market_calendars
 conda install pandas_market_calendars
+
+
+
+
+
+
+
+-- Run Codes in background
+--------------------------
+nohup python TiRun.py output.log 2>&1 &
+ps aux | grep TiRun.py
