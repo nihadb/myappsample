@@ -14,6 +14,22 @@ apt install dnf
 
 https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_GettingStarted.CreatingConnecting.Oracle.html#CHAP_GettingStarted.Creating.Oracle
 
+wget https://download.oracle.com/otn_software/linux/instantclient/1924000/oracle-instantclient19.24-basic-19.24.0.0.0-1.x86_64.rpm
+
+sudo yum install oracle-instantclient19.24-basic-19.24.0.0.0-1.x86_64.rpm    
+
+cd /usr/lib/oracle/19.24/client64/lib/network/
+
+DATABASE=
+      (DESCRIPTION =
+         (ADDRESS_LIST =
+           (ADDRESS = (PROTOCOL = TCP)(HOST = xlr8.cdwl2cgjkbih.us-west-2.rds.amazonaws.com)(PORT = 1521))
+         )
+         (CONNECT_DATA =
+             (SERVICE_NAME = DATABASE)
+        )
+     )
+
 
 
 -- downloading from S3 on EC2
