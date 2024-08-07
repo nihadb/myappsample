@@ -140,3 +140,8 @@ ps aux | grep TiRun.py
 -- Sage Maker Token
 --------------------
 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
+
+
+
+-- copying files from EC2 to local desk
+scp -i C:\Users\TFAL\Downloads\KeyPair_XLR8_DB.pem ec2-user@ec2-54-188-45-180.us-west-2.compute.amazonaws.com:/home/ec2-user/codes/models/*  C:\models
