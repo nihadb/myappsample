@@ -66,9 +66,9 @@ end;
 
 
 
-ssh -i C:\KeyPair_XLR8_DB.pem ec2-user@ec2-54-188-45-180.us-west-2.compute.amazonaws.com
+ssh -i C:\Users\nihad\Downloads\KeyPair_XLR8_DB.pem ec2-user@ec2-54-188-45-180.us-west-2.compute.amazonaws.com
 
-
+ssh -i C:\Users\TFAL\Downloads\KeyPair_XLR8_DB.pem ec2-user@ec2-54-188-45-180.us-west-2.compute.amazonaws.com
 
 yum install sudo
 
