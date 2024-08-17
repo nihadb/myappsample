@@ -1,10 +1,85 @@
-ssh -i C:\Users\nihad\Downloads\KeyPair_XLR8_DB.pem ec2-user@ec2-35-155-125-91.us-west-2.compute.amazonaws.com
+ssh -i C:\Users\nihad\Downloads\KeyPair_XLR8_DB.pem ec2-user@ec2-52-33-235-67.us-west-2.compute.amazonaws.com
 
 sudo yum update -y
 sudo yum install -y python3-pip tar gzip
 
 
-aws s3 cp  s3://Stockitdata/AL2023_PY.tar.gz .
-tar -xzvf project_files.tar.gz -C .
+aws s3 cp  s3://stockitdata/AL2023_PY.tar.gz .
+tar -xzvf AL2023_PY.tar.gz -C .
+
+
+
+---- Download Anaconda
+cd /tmp
+wget https://repo.anaconda.com/archive/Anaconda3-2024.06-1-Linux-x86_64.sh
+chmod +x Anaconda3-2024.06-1-Linux-x86_64.sh
+./Anaconda3-2024.06-1-Linux-x86_64.sh
+
+conda create -n myenv python=3.9
+conda activate myenv
+
+-- install polygon
+pip install polygon-api-client
+
+
+conda deactivate
+pip install polygon-api-client
+
+
+-- Download libraries:
+sudo yum groupinstall -y "Development Tools"
+sudo yum install -y oracle-release-el7
+sudo yum install -y oracle-instantclient19.8-basic oracle-instantclient19.8-devel
+
+export LD_LIBRARY_PATH=/usr/lib/oracle/19.8/client64/lib:$LD_LIBRARY_PATH
+export PATH=/usr/lib/oracle/19.8/client64/bin:$PATH
+echo 'export LD_LIBRARY_PATH=/usr/lib/oracle/19.8/client64/lib:$LD_LIBRARY_PATH' >> ~/.bashrc
+echo 'export PATH=/usr/lib/oracle/19.8/client64/bin:$PATH' >> ~/.bashrc
+source ~/.bashrc
+
+pip3 install cx_Oracle
+
+pip3 install pandas_market_calendars
+
+
+-- install talib
+sudo yum install -y gcc gcc-c++ kernel-devel make
+sudo yum install -y wget tar
+sudo yum install -y python3-pip python3-devel
+sudo yum install -y git
+
+wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz
+tar -xzvf ta-lib-0.4.0-src.tar.gz
+cd ta-lib/
+./configure --prefix=/usr
+make
+sudo make install
+
+pip3 install ta-lib
+
+
+
+pip3 install ta
+
+pip3 install ibapi
+
+
+-- download oracle base:
+wget https://download.oracle.com/otn_software/linux/instantclient/1924000/oracle-instantclient19.24-basic-19.24.0.0.0-1.x86_64.rpm
+sudo yum install oracle-instantclient19.24-basic-19.24.0.0.0-1.x86_64.rpm
+
+#create tnsnames.ora in /usr/lib/oracle/19.24/client64/lib/network/admin
+
+DATABASE=
+      (DESCRIPTION =
+         (ADDRESS_LIST =
+           (ADDRESS = (PROTOCOL = TCP)(HOST = xlr8.cdwl2cgjkbih.us-west-2.rds.amazonaws.com)(PORT = 1521))
+         )
+         (CONNECT_DATA =
+             (SERVICE_NAME = DATABASE)
+        )
+     )
+
+
 
 
