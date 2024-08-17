@@ -1,0 +1,10 @@
+ssh -i C:\Users\nihad\Downloads\KeyPair_XLR8_DB.pem ec2-user@ec2-35-155-125-91.us-west-2.compute.amazonaws.com
+
+sudo yum update -y
+sudo yum install -y python3-pip tar gzip
+
+
+aws s3 cp  s3://Stockitdata/AL2023_PY.tar.gz .
+tar -xzvf project_files.tar.gz -C .
+
+
