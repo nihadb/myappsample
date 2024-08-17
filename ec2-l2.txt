@@ -84,6 +84,8 @@ DATABASE=
 
 
 -- installing IBC
+"https://dev.to/kairatorozobekov/setting-up-tws-ibc-on-ec2-instance-88b"
+
 sudo yum install -y xorg-x11-server-Xvfb
 
 sudo amazon-linux-extras install epel -y
