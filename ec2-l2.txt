@@ -85,28 +85,28 @@ DATABASE=
 
 -- installing IBC
 "https://dev.to/kairatorozobekov/setting-up-tws-ibc-on-ec2-instance-88b"
-
 sudo yum install -y xorg-x11-server-Xvfb
-
 sudo amazon-linux-extras install epel -y
-
 sudo yum install x11vnc -y
-/usr/bin/Xvfb :0 -ac -screen 0 1024x768x24 &
 
+ps aux | grep x11vnc
+
+
+/usr/bin/Xvfb :0 -ac -screen 0 1024x768x24 &
 /usr/bin/x11vnc -ncache 10 -ncache_cr -viewpasswd ibc -passwd ibc -display :0 -forever -shared -bg -noipv6
 
 ## add an inbound rule for port 5900
 ## Download TightVNC and connect to the EC2 host
-
 sudo apt install -y metacity
 DISPLAY=:0 metacity &
-
+############# to download IB Gateway
 wget https://download2.interactivebrokers.com/installers/ibgateway/stable-standalone/ibgateway-stable-standalone-linux-x64.sh
 chmod +x ibgateway-stable-standalone-linux-x64.sh
 
 Xvfb :1 -screen 0 1024x768x24 &
 export DISPLAY=:1
 ./ibgateway-stable-standalone-linux-x64.sh
+###############################
 
-DISPLAY=:0./ibgateway
+DISPLAY=:0 /home/ec2-user/Jts/ibgateway/1019/ibgateway
 
