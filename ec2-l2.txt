@@ -107,7 +107,7 @@ ps aux | grep x11vnc
 
 ## add an inbound rule for port 5900
 ## Download TightVNC and connect to the EC2 host
-sudo apt install -y metacity
+sudo yum install -y metacity
 DISPLAY=:0 metacity &
 ############# to download IB Gateway
 wget https://download2.interactivebrokers.com/installers/ibgateway/stable-standalone/ibgateway-stable-standalone-linux-x64.sh
