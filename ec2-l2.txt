@@ -9,6 +9,16 @@ tar -xzvf AL2023_PY.tar.gz -C .
 
 
 
+---- Set up Github connection
+ssh-keygen -t rsa -b 4096 -C "nihad.barghouti@gmail.com"
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_rsa
+ssh -T git@github.com
+
+git clone git@github.com:nihadb/xlr8.git
+git pull origin
+
+
 ---- Download Anaconda
 cd /tmp
 wget https://repo.anaconda.com/archive/Anaconda3-2024.06-1-Linux-x86_64.sh
