@@ -143,3 +143,7 @@ export DISPLAY=:99
 #### change permission on sh files:
 chmod +x /home/ec2-user/IBC/scripts/displaybannerandlaunch.sh
 chmod +x /home/ec2-user/IBC/scripts/ibcstart.sh
+
+## run IB Gateway in background:
+./gatewaystart.sh &
+ps aux | grep gate
