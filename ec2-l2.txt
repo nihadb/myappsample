@@ -129,3 +129,17 @@ sudo kill <pid>
 
 ## Not sure:
 nohup xvfb-run /opt/startIBControllerGateway &
+
+
+
+-- Running IBC
+sudo yum install xterm
+sudo yum install xauth
+
+Xvfb :99 -screen 0 1024x768x24 &
+export DISPLAY=:99
+
+#### replace the last section in gatewaystart.sh with "exec "${IBC_PATH}/scripts/displaybannerandlaunch.sh""
+#### change permission on sh files:
+chmod +x /home/ec2-user/IBC/scripts/displaybannerandlaunch.sh
+chmod +x /home/ec2-user/IBC/scripts/ibcstart.sh
