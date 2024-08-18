@@ -1,0 +1,244 @@
+ssh -i C:\Users\nihad\Downloads\KeyPair_XLR8_DB.pem ec2-user@ec2-35-164-48-120.us-west-2.compute.amazonaws.com
+
+sudo yum update -y
+
+
+-- DOwnloading ORACLE database:
+sudo yum install -y binutils compat-libcap1 compat-libstdc++-33 gcc gcc-c++ glibc glibc-devel ksh libaio libaio-devel libX11 libXau libXi libXtst libXrender libXrender-devel libgcc libstdc++ libstdc++-devel libxcb make smartmontools sysstat
+
+sudo nano /etc/sysctl.conf
+## add these values
+fs.aio-max-nr = 1048576
+fs.file-max = 6815744
+kernel.shmall = 2097152
+kernel.shmmax = 4294967295
+kernel.shmmni = 4096
+kernel.sem = 250 32000 100 128
+net.ipv4.ip_local_port_range = 9000 65500
+net.core.rmem_default = 262144
+net.core.rmem_max = 4194304
+net.core.wmem_default = 262144
+net.core.wmem_max = 1048576
+###############################
+sudo sysctl -p
+sudo nano /etc/security/limits.conf
+## add these values
+oracle   soft   nofile    1024
+oracle   hard   nofile    65536
+oracle   soft   nproc     16384
+oracle   hard   nproc     16384
+oracle   soft   stack     10240
+oracle   hard   stack     32768
+oracle   soft   memlock   5767168
+oracle   hard   memlock   5767168
+################################
+sudo groupadd oinstall
+sudo groupadd dba
+sudo useradd -g oinstall -G dba oracle
+sudo passwd oracle
+
+sudo passwd -d oracle
+
+sudo mkdir -p /u01/app/oracle/product/19.0.0/dbhome_1
+sudo chown -R oracle:oinstall /u01
+sudo chmod -R 775 /u01
+
+
+-- Download the oracle zip installation file and copy it over to the EC2 instance: 
+## https://www.oracle.com/database/technologies/oracle19c-linux-downloads.html
+scp -i C:\Users\nihad\Downloads\KeyPair_XLR8_DB.pem C:\Users\nihad\Downloads\LINUX.X64_193000_db_home.zip ec2-user@35.164.48.120:/home/oracle/
+
+
+su - oracle
+unzip /home/oracle/LINUX.X64_193000_db_home.zip -d /u01/app/oracle/product/19.0.0/dbhome_1
+
+nano ~/.bash_profile
+## add these values
+export ORACLE_BASE=/u01/app/oracle
+export ORACLE_HOME=/u01/app/oracle/product/19.0.0/dbhome_1
+export ORACLE_SID=orcl
+export PATH=$ORACLE_HOME/bin:$PATH
+export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib
+export CLASSPATH=$ORACLE_HOME/jlib:$ORACLE_HOME/rdbms/jlib
+##################################
+source ~/.bash_profile
+
+sudo yum install -y xorg-x11-server-Xvfb
+sudo amazon-linux-extras install epel -y
+sudo yum install x11vnc -y
+sudo yum install -y metacity
+
+
+cd $ORACLE_HOME
+/usr/bin/Xvfb :0 -ac -screen 0 1024x768x24 &
+/usr/bin/x11vnc -ncache 10 -ncache_cr -viewpasswd ibc -passwd ibc -display :0 -forever -shared -bg -noipv6
+
+DISPLAY=:0 metacity &
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+sudo yum install -y python3-pip tar gzip
+
+
+aws s3 cp  s3://stockitdata/AL2023_PY.tar.gz .
+tar -xzvf AL2023_PY.tar.gz -C .
+
+
+
+---- Set up Github connection
+ssh-keygen -t rsa -b 4096 -C "nihad.barghouti@gmail.com"
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_rsa
+ssh -T git@github.com
+
+git clone git@github.com:nihadb/xlr8.git
+git pull origin
+
+
+---- Download Anaconda
+cd /tmp
+wget https://repo.anaconda.com/archive/Anaconda3-2024.06-1-Linux-x86_64.sh
+chmod +x Anaconda3-2024.06-1-Linux-x86_64.sh
+./Anaconda3-2024.06-1-Linux-x86_64.sh
+
+conda create -n myenv python=3.9
+conda activate myenv
+
+-- install polygon
+pip install polygon-api-client
+
+
+conda deactivate
+pip install polygon-api-client
+
+
+-- Download libraries:
+sudo yum groupinstall -y "Development Tools"
+sudo yum install -y oracle-release-el7
+sudo yum install -y oracle-instantclient19.8-basic oracle-instantclient19.8-devel
+
+export LD_LIBRARY_PATH=/usr/lib/oracle/19.8/client64/lib:$LD_LIBRARY_PATH
+export PATH=/usr/lib/oracle/19.8/client64/bin:$PATH
+echo 'export LD_LIBRARY_PATH=/usr/lib/oracle/19.8/client64/lib:$LD_LIBRARY_PATH' >> ~/.bashrc
+echo 'export PATH=/usr/lib/oracle/19.8/client64/bin:$PATH' >> ~/.bashrc
+source ~/.bashrc
+
+pip3 install cx_Oracle
+
+pip3 install pandas_market_calendars
+
+
+-- install talib
+sudo yum install -y gcc gcc-c++ kernel-devel make
+sudo yum install -y wget tar
+sudo yum install -y python3-pip python3-devel
+sudo yum install -y git
+
+wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz
+tar -xzvf ta-lib-0.4.0-src.tar.gz
+cd ta-lib/
+./configure --prefix=/usr
+make
+sudo make install
+
+pip3 install ta-lib
+
+
+
+pip3 install ta
+
+pip3 install ibapi
+
+
+-- download oracle base:
+wget https://download.oracle.com/otn_software/linux/instantclient/1924000/oracle-instantclient19.24-basic-19.24.0.0.0-1.x86_64.rpm
+sudo yum install oracle-instantclient19.24-basic-19.24.0.0.0-1.x86_64.rpm
+
+#create tnsnames.ora in /usr/lib/oracle/19.24/client64/lib/network/admin
+
+DATABASE=
+      (DESCRIPTION =
+         (ADDRESS_LIST =
+           (ADDRESS = (PROTOCOL = TCP)(HOST = xlr8.cdwl2cgjkbih.us-west-2.rds.amazonaws.com)(PORT = 1521))
+         )
+         (CONNECT_DATA =
+             (SERVICE_NAME = DATABASE)
+        )
+     )
+
+
+
+
+-- installing IBC
+"https://dev.to/kairatorozobekov/setting-up-tws-ibc-on-ec2-instance-88b"
+sudo yum install -y xorg-x11-server-Xvfb
+sudo amazon-linux-extras install epel -y
+sudo yum install x11vnc -y
+
+ps aux | grep x11vnc
+
+
+/usr/bin/Xvfb :0 -ac -screen 0 1024x768x24 &
+/usr/bin/x11vnc -ncache 10 -ncache_cr -viewpasswd ibc -passwd ibc -display :0 -forever -shared -bg -noipv6
+
+## add an inbound rule for port 5900
+## Download TightVNC and connect to the EC2 host
+sudo apt install -y metacity
+DISPLAY=:0 metacity &
+############# to download IB Gateway
+wget https://download2.interactivebrokers.com/installers/ibgateway/stable-standalone/ibgateway-stable-standalone-linux-x64.sh
+chmod +x ibgateway-stable-standalone-linux-x64.sh
+
+Xvfb :1 -screen 0 1024x768x24 &
+export DISPLAY=:1
+./ibgateway-stable-standalone-linux-x64.sh
+###############################
+
+DISPLAY=:0 /home/ec2-user/Jts/ibgateway/1019/ibgateway
+
+
+-- IB Gateway setting: 
+ps aux | grep ibgateway
+sudo kill <pid>
+./home/ec2-user/Jts/ibgateway/1019/ibgateway &
+
+
+## Not sure:
+nohup xvfb-run /opt/startIBControllerGateway &
+
+
+
+-- Running IBC
+## Download the linux version:
+https://github.com/IbcAlpha/IBC/releases/download/3.8.1/IBCLinux-3.8.1.zip
+## unzip it and update the config and gatwaystart.sh files as below. Save it and then move it EC2
+## compy the IBC linux zip file from desktop
+scp -i C:\Users\nihad\Downloads\KeyPair_XLR8_DB.pem C:\Users\nihad\OneDrive\Desktop\IBC.zip ec2-user@52.33.235.67:/home/ec2-user/
+
+
+
+sudo yum install xterm
+sudo yum install xauth
+
+Xvfb :99 -screen 0 1024x768x24 &
+export DISPLAY=:99
+
+#### replace the last section in gatewaystart.sh with "exec "${IBC_PATH}/scripts/displaybannerandlaunch.sh""
+#### change permission on sh files:
+chmod +x /home/ec2-user/IBC/scripts/displaybannerandlaunch.sh
+chmod +x /home/ec2-user/IBC/scripts/ibcstart.sh
+
+## run IB Gateway in background:
+. /home/ec2-user/IBC/gatewaystart.sh &
+ps aux | grep gate
