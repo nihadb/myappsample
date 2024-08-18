@@ -122,5 +122,10 @@ DISPLAY=:0 /home/ec2-user/Jts/ibgateway/1019/ibgateway
 
 
 -- IB Gateway setting: 
+ps aux | grep ibgateway
+sudo kill <pid>
+./home/ec2-user/Jts/ibgateway/1019/ibgateway &
+
+
 ## Not sure:
 nohup xvfb-run /opt/startIBControllerGateway &
