@@ -133,6 +133,14 @@ nohup xvfb-run /opt/startIBControllerGateway &
 
 
 -- Running IBC
+## Download the linux version:
+https://github.com/IbcAlpha/IBC/releases/download/3.8.1/IBCLinux-3.8.1.zip
+## unzip it and update the config and gatwaystart.sh files as below. Save it and then move it EC2
+## compy the IBC linux zip file from desktop
+scp -i C:\Users\nihad\Downloads\KeyPair_XLR8_DB.pem C:\Users\nihad\OneDrive\Desktop\IBC.zip ec2-user@52.33.235.67:/home/ec2-user/
+
+
+
 sudo yum install xterm
 sudo yum install xauth
 
