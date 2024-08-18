@@ -153,5 +153,5 @@ chmod +x /home/ec2-user/IBC/scripts/displaybannerandlaunch.sh
 chmod +x /home/ec2-user/IBC/scripts/ibcstart.sh
 
 ## run IB Gateway in background:
-./gatewaystart.sh &
+./home/ec2-user/IBC/gatewaystart.sh &
 ps aux | grep gate
