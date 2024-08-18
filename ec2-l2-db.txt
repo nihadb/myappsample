@@ -2,6 +2,11 @@ ssh -i C:\Users\nihad\Downloads\KeyPair_XLR8_DB.pem ec2-user@ec2-35-164-48-120.u
 
 sudo yum update -y
 
+sudo yum install -y xorg-x11-server-Xvfb
+sudo amazon-linux-extras install epel -y
+sudo yum install x11vnc -y
+sudo yum install -y metacity
+
 
 -- DOwnloading ORACLE database:
 sudo yum install -y binutils compat-libcap1 compat-libstdc++-33 gcc gcc-c++ glibc glibc-devel ksh libaio libaio-devel libX11 libXau libXi libXtst libXrender libXrender-devel libgcc libstdc++ libstdc++-devel libxcb make smartmontools sysstat
@@ -10,8 +15,8 @@ sudo nano /etc/sysctl.conf
 ## add these values
 fs.aio-max-nr = 1048576
 fs.file-max = 6815744
-kernel.shmall = 2097152
-kernel.shmmax = 4294967295
+kernel.shmall = 4194304
+kernel.shmmax = 17179869184
 kernel.shmmni = 4096
 kernel.sem = 250 32000 100 128
 net.ipv4.ip_local_port_range = 9000 65500
@@ -20,6 +25,12 @@ net.core.rmem_max = 4194304
 net.core.wmem_default = 262144
 net.core.wmem_max = 1048576
 ###############################
+
+## change the shmmax to the one above:
+sudo nano /proc/sys/kernel/shmmax
+## change the shmall to the one above:
+sudo nano /proc/sys/kernel/shmall
+
 sudo sysctl -p
 sudo nano /etc/security/limits.conf
 ## add these values
@@ -63,17 +74,61 @@ export CLASSPATH=$ORACLE_HOME/jlib:$ORACLE_HOME/rdbms/jlib
 ##################################
 source ~/.bash_profile
 
-sudo yum install -y xorg-x11-server-Xvfb
-sudo amazon-linux-extras install epel -y
-sudo yum install x11vnc -y
-sudo yum install -y metacity
-
 
 cd $ORACLE_HOME
 /usr/bin/Xvfb :0 -ac -screen 0 1024x768x24 &
 /usr/bin/x11vnc -ncache 10 -ncache_cr -viewpasswd ibc -passwd ibc -display :0 -forever -shared -bg -noipv6
 
 DISPLAY=:0 metacity &
+export DISPLAY=:0
+
+## Download software only 
+./runInstaller
+## download database
+dbca
+
+
+lsnrctl start
+ps -ef | grep pmon
+
+
+--- To start database on the boot of EC2:
+sudo nano /etc/systemd/system/oracledb.service
+## add these values:
+[Unit]
+Description=Oracle Database
+After=network.target
+
+[Service]
+Type=forking
+User=oracle
+Group=oinstall
+ExecStart=/u01/app/oracle/product/19.0.0/dbhome_1/bin/lsnrctl start
+ExecStartPost=/u01/app/oracle/product/19.0.0/dbhome_1/bin/sqlplus /nolog @/u01/app/oracle/product/19.0.0/dbhome_1/network/admin/STARTUP.sql
+ExecStop=/u01/app/oracle/product/19.0.0/dbhome_1/bin/lsnrctl stop
+ExecStopPost=/u01/app/oracle/product/19.0.0/dbhome_1/bin/sqlplus /nolog @/u01/app/oracle/product/19.0.0/dbhome_1/network/admin/SHUTDOWN.sql
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+################################################
+
+## Make sure that the STARTUP and SHUTDOWN scripts exist in /u01/app/oracle/product/19.0.0/dbhome_1/network/admin/:
+# Startup:
+CONNECT / AS SYSDBA
+STARTUP
+# Shutdown
+CONNECT / AS SYSDBA
+SHUTDOWN IMMEDIATE
+# Make sure that the scripts have permissions
+sudo chmod +x /u01/app/oracle/product/19.0.0/dbhome_1/network/admin/STARTUP.sql
+sudo chmod +x /u01/app/oracle/product/19.0.0/dbhome_1/network/admin/SHUTDOWN.sql
+
+sudo systemctl daemon-reload
+sudo systemctl enable oracledb.service
+sudo systemctl start oracledb.service
+sudo systemctl status oracledb.service
+
 
 
 
