@@ -120,3 +120,7 @@ export DISPLAY=:1
 
 DISPLAY=:0 /home/ec2-user/Jts/ibgateway/1019/ibgateway
 
+
+-- IB Gateway setting: 
+## Not sure:
+nohup xvfb-run /opt/startIBControllerGateway &
