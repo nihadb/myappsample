@@ -1,4 +1,4 @@
-ssh -i C:\Users\nihad\Downloads\KeyPair_XLR8_DB.pem ec2-user@ec2-35-164-48-120.us-west-2.compute.amazonaws.com
+ssh -i C:\Users\nihad\Downloads\KeyPair_XLR8_DB.pem ec2-user@ec2-54-213-156-117.us-west-2.compute.amazonaws.com
 
 sudo yum update -y
 
@@ -57,7 +57,7 @@ sudo chmod -R 775 /u01
 
 -- Download the oracle zip installation file and copy it over to the EC2 instance: 
 ## https://www.oracle.com/database/technologies/oracle19c-linux-downloads.html
-scp -i C:\Users\nihad\Downloads\KeyPair_XLR8_DB.pem C:\Users\nihad\Downloads\LINUX.X64_193000_db_home.zip ec2-user@35.164.48.120:/home/oracle/
+scp -i C:\Users\nihad\Downloads\KeyPair_XLR8_DB.pem C:\Users\nihad\Downloads\LINUX.X64_193000_db_home.zip ec2-user@54.213.156.117:/home/oracle/
 
 
 su - oracle
@@ -73,6 +73,10 @@ export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib
 export CLASSPATH=$ORACLE_HOME/jlib:$ORACLE_HOME/rdbms/jlib
 ##################################
 source ~/.bash_profile
+
+## add oracle user to sudo
+sudo visudo
+# vi the file and add: oracle ALL=(ALL) NOPASSWD: ALL
 
 
 cd $ORACLE_HOME
@@ -93,36 +97,43 @@ ps -ef | grep pmon
 
 
 --- To start database on the boot of EC2:
+sudo nano /home/oracle/startup.sh
+## add this:
+#!/bin/bash
+export ORACLE_HOME=/u01/app/oracle/product/19.0.0/dbhome_1
+export ORACLE_SID=XLR8DB
+export PATH=$ORACLE_HOME/bin:$PATH
+
+# Start the listener
+$ORACLE_HOME/bin/lsnrctl start
+
+# Start the database
+echo "Starting Oracle Database..."
+$ORACLE_HOME/bin/sqlplus / as sysdba <<EOF
+STARTUP;
+EXIT;
+EOF
+##########################
+
+sudo chmod +x /home/oracle/startup.sh
+
+
 sudo nano /etc/systemd/system/oracledb.service
 ## add these values:
 [Unit]
-Description=Oracle Database
+Description=Oracle Database Startup Service
 After=network.target
 
 [Service]
-Type=forking
+Type=oneshot
 User=oracle
-Group=oinstall
-ExecStart=/u01/app/oracle/product/19.0.0/dbhome_1/bin/lsnrctl start
-ExecStartPost=/u01/app/oracle/product/19.0.0/dbhome_1/bin/sqlplus /nolog @/u01/app/oracle/product/19.0.0/dbhome_1/network/admin/STARTUP.sql
-ExecStop=/u01/app/oracle/product/19.0.0/dbhome_1/bin/lsnrctl stop
-ExecStopPost=/u01/app/oracle/product/19.0.0/dbhome_1/bin/sqlplus /nolog @/u01/app/oracle/product/19.0.0/dbhome_1/network/admin/SHUTDOWN.sql
-Restart=on-failure
+ExecStart=/home/oracle/startup.sh
+RemainAfterExit=yes
 
 [Install]
 WantedBy=multi-user.target
 ################################################
 
-## Make sure that the STARTUP and SHUTDOWN scripts exist in /u01/app/oracle/product/19.0.0/dbhome_1/network/admin/:
-# Startup:
-CONNECT / AS SYSDBA
-STARTUP
-# Shutdown
-CONNECT / AS SYSDBA
-SHUTDOWN IMMEDIATE
-# Make sure that the scripts have permissions
-sudo chmod +x /u01/app/oracle/product/19.0.0/dbhome_1/network/admin/STARTUP.sql
-sudo chmod +x /u01/app/oracle/product/19.0.0/dbhome_1/network/admin/SHUTDOWN.sql
 
 sudo systemctl daemon-reload
 sudo systemctl enable oracledb.service
