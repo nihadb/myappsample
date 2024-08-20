@@ -144,8 +144,8 @@ scp -i C:\Users\nihad\Downloads\KeyPair_XLR8_DB.pem C:\Users\nihad\OneDrive\Desk
 sudo yum install xterm
 sudo yum install xauth
 
-Xvfb :99 -screen 0 1024x768x24 &
-export DISPLAY=:99
+/usr/bin/Xvfb :99 -ac -screen 0 1024x768x24 &
+/usr/bin/x11vnc -ncache 10 -ncache_cr -viewpasswd ibc -passwd ibc -display :99 -forever -shared -bg -noipv6
 
 #### replace the last section in gatewaystart.sh with "exec "${IBC_PATH}/scripts/displaybannerandlaunch.sh""
 #### change permission on sh files:
