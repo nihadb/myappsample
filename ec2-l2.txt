@@ -48,7 +48,7 @@ echo 'export PATH=/usr/lib/oracle/19.8/client64/bin:$PATH' >> ~/.bashrc
 source ~/.bashrc
 
 pip3 install cx_Oracle
-
+pip3 install twilio
 pip3 install pandas_market_calendars
 
 
@@ -155,3 +155,21 @@ chmod +x /home/ec2-user/IBC/scripts/ibcstart.sh
 ## run IB Gateway in background:
 . /home/ec2-user/IBC/gatewaystart.sh &
 ps aux | grep gate
+
+
+
+
+###### to set up Lambda
+#######################
+pip install pipreqs
+# go to the folder that includes XLR8 codes:
+pipreqs . --force
+# create this folder:
+mkdir /home/ec2-user/codes/my-lambda-layer/python/lib/python3.12/site-packages && cd
+# after we log into that folder:
+conda activate /home/ec2-user/anaconda3/envs/myenv
+pip3 install -r /home/ec2-user/codes/xlr8/requirements.txt -t .
+# zip the files:
+cd ../../../../
+zip -r9 ../my-lambda-layer.zip .
+# upload to lambda
