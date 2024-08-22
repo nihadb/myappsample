@@ -159,6 +159,50 @@ ps aux | grep gate
 
 
 
+###### to SSH from Lambda to EC2 and execute code
+##################################################
+# create this folder:
+mkdir /home/ec2-user/codes/my-lambda-layer/python/lib/python3.12/site-packages && cd
+# after we log into that folder:
+conda activate /home/ec2-user/anaconda3/envs/myenv
+pip install paramiko -t .
+pip install cffi -t .
+# zip the files:
+cd ../../../../
+zip -r9 ../SSH-lambda-layer.zip .
+# copy the zip file to local desktop so we can upload it to lambda
+scp -i C:\Users\nihad\Downloads\KeyPair_XLR8_DB.pem ec2-user@52.33.235.67:/home/ec2-user/codes/SSH-lambda-layer.zip  C:\Users\nihad\Downloads\
+#upload to lmabda
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ###### to set up Lambda
 #######################
 pip install pipreqs
