@@ -166,6 +166,7 @@ mkdir /home/ec2-user/codes/my-lambda-layer/python/lib/python3.12/site-packages &
 # after we log into that folder:
 conda activate /home/ec2-user/anaconda3/envs/myenv
 pip install paramiko -t .
+pip install boto3
 pip install cffi -t .
 # zip the files:
 cd ../../../../
