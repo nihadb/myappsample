@@ -179,7 +179,18 @@ scp -i C:\Users\nihad\Downloads\KeyPair_XLR8_DB.pem ec2-user@52.33.235.67:/home/
 
 
 
+##### S3 access from RDS
+########################
+1. add the IAM role: rds-s3-integration-role to RDS
+2. execute this in RDS:
 
+BEGIN
+   DBMS_CLOUD.CREATE_CREDENTIAL(
+      credential_name => 'S3_CREDENTIALS',
+      username        => 'arn:aws:iam::592067090231:role/rds-s3-integration-role',
+      password        => ' ');
+END;
+/
 
 
 
