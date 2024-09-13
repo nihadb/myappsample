@@ -229,3 +229,91 @@ pip3 install -r /home/ec2-user/codes/xlr8/requirements.txt -t .
 cd ../../../../
 zip -r9 ../my-lambda-layer.zip .
 # upload to lambda
+
+
+
+
+
+########## SCripts in Google Sheets:
+
+function importCSVFromS3() {
+  var s3Bucket = 'xlr8report';
+  var s3Key = 'recent_day_performance.csv';
+  var fileUrl = 'https://' + s3Bucket + '.s3.us-west-2.amazonaws.com/' + s3Key;
+  
+  var response = UrlFetchApp.fetch(fileUrl);
+  var csvData = response.getContentText();
+  var csvArray = Utilities.parseCsv(csvData);
+  
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Daily Report Data');
+  sheet.clear();
+  sheet.getRange(1, 1, csvArray.length, csvArray[0].length).setValues(csvArray);
+
+
+
+
+
+
+  var s3Key = 'year_list.csv';
+  var fileUrl = 'https://' + s3Bucket + '.s3.us-west-2.amazonaws.com/' + s3Key;
+  
+  var response = UrlFetchApp.fetch(fileUrl);
+  var csvData = response.getContentText();
+  var csvArray = Utilities.parseCsv(csvData);
+  
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Year List');
+  sheet.clear();
+  sheet.getRange(1, 1, csvArray.length, csvArray[0].length).setValues(csvArray);
+
+
+
+
+
+
+
+  var s3Key = 'month_list.csv';
+  var fileUrl = 'https://' + s3Bucket + '.s3.us-west-2.amazonaws.com/' + s3Key;
+  
+  var response = UrlFetchApp.fetch(fileUrl);
+  var csvData = response.getContentText();
+  var csvArray = Utilities.parseCsv(csvData);
+  
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Month List');
+  sheet.clear();
+  sheet.getRange(1, 1, csvArray.length, csvArray[0].length).setValues(csvArray);
+
+
+
+
+
+
+
+  var s3Key = 'pivot_tables.csv';
+  var fileUrl = 'https://' + s3Bucket + '.s3.us-west-2.amazonaws.com/' + s3Key;
+  
+  var response = UrlFetchApp.fetch(fileUrl);
+  var csvData = response.getContentText();
+  var csvArray = Utilities.parseCsv(csvData);
+  
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Pivot Tables Data');
+  sheet.clear();
+  sheet.getRange(1, 1, csvArray.length, csvArray[0].length).setValues(csvArray);
+}
+
+
+###############################
+
+
+function Formatting (){
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  
+  var formatCell = sheet.getRange('A3');  // Cell containing the format
+  
+  var targetRange = sheet.getRange('E5:P13');
+  var selectedFormat = formatCell.getValue();  // Get the custom format from the cell
+  targetRange.setNumberFormat(selectedFormat);
+
+  var targetRange = sheet.getRange('E19:AI31');
+  var selectedFormat = formatCell.getValue();  // Get the custom format from the cell
+  targetRange.setNumberFormat(selectedFormat);
+}
