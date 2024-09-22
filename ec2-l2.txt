@@ -78,6 +78,9 @@ pip3 install ibapi
 wget https://download.oracle.com/otn_software/linux/instantclient/1924000/oracle-instantclient19.24-basic-19.24.0.0.0-1.x86_64.rpm
 sudo yum install oracle-instantclient19.24-basic-19.24.0.0.0-1.x86_64.rpm
 
+wget https://download.oracle.com/otn_software/linux/instantclient/1924000/oracle-instantclient19.24-sqlplus-19.24.0.0.0-1.x86_64.rpm
+sudo yum install oracle-instantclient19.24-sqlplus-19.24.0.0.0-1.x86_64.rpm
+
 #create tnsnames.ora in /usr/lib/oracle/19.24/client64/lib/network/admin
 
 DATABASE=
