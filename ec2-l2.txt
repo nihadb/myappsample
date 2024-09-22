@@ -320,3 +320,19 @@ function Formatting (){
   var selectedFormat = formatCell.getValue();  // Get the custom format from the cell
   targetRange.setNumberFormat(selectedFormat);
 }
+
+
+
+
+
+##############################
+
+
+#### To kill a session in oracle, we run this command:
+BEGIN
+    rdsadmin.rdsadmin_util.kill(
+        sid    => 45, 
+        serial => 1506,
+        method => 'IMMEDIATE');
+END;
+/
