@@ -336,3 +336,16 @@ BEGIN
         method => 'IMMEDIATE');
 END;
 /
+
+
+
+
+#### To Analyze the table statistics:
+BEGIN
+  DBMS_STATS.GATHER_TABLE_STATS(
+    ownname => 'SCHEMA_NAME',
+    tabname => 'TABLE_NAME',
+    estimate_percent => DBMS_STATS.AUTO_SAMPLE_SIZE
+  );
+END;
+/
